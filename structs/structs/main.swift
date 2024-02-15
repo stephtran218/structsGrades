@@ -8,13 +8,15 @@
 import Foundation
 import CSV
 
+//This struct will hold all the info on the student
 struct Student {
     var fullName: String
     var grades: [String]
     var finalGrade: Double
 }
 
-var studentInfo: [Student] = []
+//The gradeBook array will be used throughout the code to get info on grades and perform calculations
+var gradeBook: [Student] = []
 
 //This is a safety parameter that prevents errors from crashing the code
 do{
@@ -29,6 +31,7 @@ catch{
     print("There was an error trying to read the file")
 }
 
+//This function will sort out the data
 func manageData( _ row: [String]){
     //this takes the 0-index in all the rows in csv file and takes it as the students name
     var tempName: String = row[0]
@@ -52,12 +55,12 @@ func manageData( _ row: [String]){
     var tempGPA: Double = round(sum * 10) / 100
     tempStudent.finalGrade = tempGPA
     
-    studentInfo.append(tempStudent)
+    gradeBook.append(tempStudent)
     
 }
 mainMenu()
 
-
+//This is the main menu function that will display all the options for the user
 func mainMenu() {
     var menuChoice: String = "0"
     
@@ -84,15 +87,15 @@ func mainMenu() {
             } else if userPick == "4" {
                 classAverage()
             } else if userPick == "5" {
-//                assignmentGradeAverage()
+                assignmentGradeAverage()
             } else if userPick == "6" {
-//                classLowestGrade()
+                classLowestGrade()
             } else if userPick == "7" {
-//                classHighestGrade()
+                classHighestGrade()
             } else if userPick == "8" {
-//                studentsByGradeRange()
+                studentsByGradeRange()
             } else if userPick == "9" {
-//                quitMenu()
+                quitMenu()
             } else {
                 print("Please enter a valid selection 1-9")
             }
@@ -101,13 +104,14 @@ func mainMenu() {
     }
 }
 
+//This option is responsible for displaying a specific student's grade that the user asked for
 func displaySingleStudentGrade(){
     print("Which student would you like to choose?")
     
     if let chosenStudent = readLine(){
         let index = findStudent(chosenStudent)
         if index != -1 {
-            let finalGrade = studentInfo[index].finalGrade
+            let finalGrade = gradeBook[index].finalGrade
             print("\(chosenStudent)'s grade in the class is \(finalGrade)")
         }else{
             print ("Student not found")
@@ -116,22 +120,24 @@ func displaySingleStudentGrade(){
     print()
 }
 
+//this function will find the student that the user requested and take the index their name was in to match with the index in the grades array
 func findStudent(_ userPick: String) -> Int {
-    for index in studentInfo.indices {
-        if studentInfo[index].fullName.lowercased() == userPick.lowercased() {
+    for index in gradeBook.indices {
+        if gradeBook[index].fullName.lowercased() == userPick.lowercased() {
             return index
         }
     }
     return -1
 }
 
+//This function will print out the specific student's name and all of the scores for every assignment (all 10)
 func displayAllStudentsGrades() {
     print("Which student would you like to choose?")
     
     if let pickedStudentName = readLine(){
         var studentIndex = findStudent(pickedStudentName)
-        if studentIndex < studentInfo.count && studentIndex != -1 {
-            let pickedStudent = studentInfo[studentIndex]
+        if studentIndex < gradeBook.count && studentIndex != -1 {
+            let pickedStudent = gradeBook[studentIndex]
             
             print("\(pickedStudent.fullName)'s grades for this class are:")
 
@@ -143,8 +149,9 @@ func displayAllStudentsGrades() {
     }
 }
 
+//this function will print out every student's name and their grade in the class (full roster)
 func displayAllGradesForAllStudents() {
-    for student in studentInfo {
+    for student in gradeBook {
         let name = student.fullName
         let grades = Array(student.grades.dropFirst())
         
@@ -155,11 +162,12 @@ func displayAllGradesForAllStudents() {
     print()
 }
 
+//This finds the average grade out of the entire class
 func classAverage() -> Double? {
     var totalSum: Double = 0.0
     var headCount: Int = 0
     
-    for student in studentInfo {
+    for student in gradeBook {
         for gradeString in student.grades {
             if let grade = Double(gradeString) {
                 totalSum += grade
@@ -176,3 +184,99 @@ func classAverage() -> Double? {
 
         return roundedAverage
 }
+
+//this finds the average grade per specfic assignment the user inputted
+func assignmentGradeAverage() {
+    print("Which assignment would you like to get the average of (1-10):")
+    
+    if let chosenAssignment = readLine(), let assignmentNumber = Int(chosenAssignment) {
+        var totalSum: Double = 0
+        var count: Int = 0
+        
+        for student in gradeBook {
+            let assignmentIndex = assignmentNumber - 1
+            if assignmentIndex < student.grades.count, let grade = Double(student.grades[assignmentIndex]){
+                totalSum += grade
+                count += 1
+            }
+        }
+        
+        if count > 0 {
+            let average = totalSum / Double(count)
+            print("The average grade for assignment \(assignmentNumber) is \(average)")
+        } else {
+            print("No grades found for assignment \(assignmentNumber)")
+        }
+    }
+    print()
+}
+
+//This will find the student who has the lowest grade in the class
+func classLowestGrade() {
+    var lowestGrade = gradeBook[0].finalGrade
+    var lowestGradeStudentName = gradeBook[0].fullName
+
+    for index in 1..<gradeBook.count {
+        let student = gradeBook[index]
+        if student.finalGrade < lowestGrade {
+            lowestGrade = student.finalGrade
+            lowestGradeStudentName = student.fullName
+        }
+    }
+
+    print("\(lowestGradeStudentName) is the student with the lowest grade: \(lowestGrade)")
+    print()
+}
+
+//This will find the student who has the highest grade in the class
+func classHighestGrade() {
+    var highestGrade = gradeBook[0].finalGrade
+    var highestGradeStudentName = gradeBook[0].fullName
+
+    for index in 1..<gradeBook.count {
+        let student = gradeBook[index]
+        if student.finalGrade > highestGrade {
+            highestGrade = student.finalGrade
+            highestGradeStudentName = student.fullName
+        }
+    }
+
+    print("\(highestGradeStudentName) is the student with the highest grade: \(highestGrade)")
+    print()
+}
+
+//This function allows users to find the students that fit in between the grade ranges they put in
+func studentsByGradeRange() {
+    print("Enter the low range you would like to use:")
+    
+    // Read the low range input
+    if let lowRangeString = readLine() {
+        if let lowRange = Double(lowRangeString) {
+            print("Enter the high range you would like to use:")
+            
+            // Read the high range input
+            if let highRangeString = readLine() {
+                if let highRange = Double(highRangeString) {
+                    // Iterate over each student in the grade book
+                    for student in gradeBook {
+                        // Check if the student's final grade falls within the specified range
+                        if student.finalGrade >= lowRange && student.finalGrade <= highRange {
+                            // Print the student's full name
+                            print(student.fullName)
+                        }
+                    }
+                    print()
+                    return
+                }
+            }
+        }
+    }
+    
+    print("Invalid input for range.")
+}
+
+//This quits the entire program and ends it with a goodbye message
+func quitMenu(){
+    print("Have a great rest of your day!")
+}
+
