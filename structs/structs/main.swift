@@ -136,6 +136,7 @@ func displayAllStudentsGrades() {
     
     if let pickedStudentName = readLine(){
         var studentIndex = findStudent(pickedStudentName)
+        //if the index isn't -1, that means there wasn't an error and it found the correct student through matching index
         if studentIndex < gradeBook.count && studentIndex != -1 {
             let pickedStudent = gradeBook[studentIndex]
             
@@ -213,13 +214,19 @@ func assignmentGradeAverage() {
 
 //This will find the student who has the lowest grade in the class
 func classLowestGrade() {
+    //this assumes that the lowest grade is the first grade in array
     var lowestGrade = gradeBook[0].finalGrade
+    //this takes the name of the first student in the array, assuming they have the lowest grade
     var lowestGradeStudentName = gradeBook[0].fullName
 
-    for index in 1..<gradeBook.count {
+    //this will go through the gradebook array
+    for index in gradeBook.indices {
         let student = gradeBook[index]
+        //this compares if the current student in the index is less than the saved index of the lowest score, the var holding the lowest grade will be the current index
         if student.finalGrade < lowestGrade {
+            //lowest grade will hold the current student bc their grade is lower than what it was compared to
             lowestGrade = student.finalGrade
+            //this changes the var so that it will have the current student w/ the lowest grade
             lowestGradeStudentName = student.fullName
         }
     }
@@ -230,13 +237,19 @@ func classLowestGrade() {
 
 //This will find the student who has the highest grade in the class
 func classHighestGrade() {
+    //this assumes that the highest grade is the first grade in array
     var highestGrade = gradeBook[0].finalGrade
+    //this takes the name of the first student in the array, assuming they have the highest grade
     var highestGradeStudentName = gradeBook[0].fullName
 
-    for index in 1..<gradeBook.count {
+    //this will go through the gradebook array
+    for index in gradeBook.indices {
         let student = gradeBook[index]
+        //this compares if the current student in the index is greater than the saved index of the highest score, the var holding the highest grade will be the current index
         if student.finalGrade > highestGrade {
+            //highest grade will hold the current student bc their grade is higher than what it was compared to
             highestGrade = student.finalGrade
+            //this changes the var so that it will have the current student w/ the highest grade
             highestGradeStudentName = student.fullName
         }
     }
@@ -249,19 +262,19 @@ func classHighestGrade() {
 func studentsByGradeRange() {
     print("Enter the low range you would like to use:")
     
-    // Read the low range input
+    // this takes what the user put in for the lower range
     if let lowRangeString = readLine() {
         if let lowRange = Double(lowRangeString) {
             print("Enter the high range you would like to use:")
             
-            // Read the high range input
+            // this takes what the user put in for the higher range
             if let highRangeString = readLine() {
                 if let highRange = Double(highRangeString) {
-                    // Iterate over each student in the grade book
+                    // this will go through all the students in the gradeBook array
                     for student in gradeBook {
-                        // Check if the student's final grade falls within the specified range
+                        // this checks if the student's final grade falls within the specified range (grade is more than low range inputted and less than high range inputted)
                         if student.finalGrade >= lowRange && student.finalGrade <= highRange {
-                            // Print the student's full name
+                            // this will print out the name of students who fit in the range
                             print(student.fullName)
                         }
                     }
