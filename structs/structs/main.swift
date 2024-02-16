@@ -109,7 +109,9 @@ func displaySingleStudentGrade(){
     print("Which student would you like to choose?")
     
     if let chosenStudent = readLine(){
+        //This calls the function findStudent to find the student's index in the roster
         let index = findStudent(chosenStudent)
+        //If index isn't -1, meaning there wasn't an error, finalGrade is the matched index of student's placement in array and their grade's
         if index != -1 {
             let finalGrade = gradeBook[index].finalGrade
             print("\(chosenStudent)'s grade in the class is \(finalGrade)")
@@ -123,6 +125,7 @@ func displaySingleStudentGrade(){
 //this function will find the student that the user requested and take the index their name was in to match with the index in the grades array
 func findStudent(_ userPick: String) -> Int {
     for index in gradeBook.indices {
+        //this allows it to not be case sensitive
         if gradeBook[index].fullName.lowercased() == userPick.lowercased() {
             return index
         }
@@ -135,13 +138,14 @@ func displayAllStudentsGrades() {
     print("Which student would you like to choose?")
     
     if let pickedStudentName = readLine(){
+        //this takes the name the user puts in and finds them using the function
         var studentIndex = findStudent(pickedStudentName)
         //if the index isn't -1, that means there wasn't an error and it found the correct student through matching index
         if studentIndex < gradeBook.count && studentIndex != -1 {
             let pickedStudent = gradeBook[studentIndex]
             
             print("\(pickedStudent.fullName)'s grades for this class are:")
-
+            //this uses a for loop so that it can print out every score as the loop runs
             for i in 1..<pickedStudent.grades.count {
                 print(pickedStudent.grades[i], terminator: ", ")
             }
@@ -156,6 +160,7 @@ func displayAllGradesForAllStudents() {
         let name = student.fullName
         let grades = Array(student.grades.dropFirst())
         
+        //This cleans up the names so it looks nicer as it prints
         let cleanedGrades = grades.joined(separator: ", ")
 
         print("\(name)'s grades are: \(cleanedGrades)")
@@ -168,6 +173,7 @@ func classAverage() -> Double? {
     var totalSum: Double = 0.0
     var headCount: Int = 0
     
+    //this uses the struct and takes account of all the grades so that it can divide it by the # of scores it went over (headCount)
     for student in gradeBook {
         for gradeString in student.grades {
             if let grade = Double(gradeString) {
@@ -194,14 +200,18 @@ func assignmentGradeAverage() {
         var totalSum: Double = 0
         var count: Int = 0
         
+        //this is using the struct to go through the gradeBook array
         for student in gradeBook {
+            //this makes sure the index accounts for the 0-index
             let assignmentIndex = assignmentNumber - 1
+            //If the index is less than the number of students, it will turn th sum of all grades into a double so that it can perform a calculation of average
             if assignmentIndex < student.grades.count, let grade = Double(student.grades[assignmentIndex]){
                 totalSum += grade
                 count += 1
             }
         }
         
+        //if count is greater than 0, that means it counted correctly and will be able to calculate the average of assignment (every time the for loop runs and accounts every assignment, it tallies the amount of times the loop ran so that it counts for the headCount whihc is the denominator/divisor
         if count > 0 {
             let average = totalSum / Double(count)
             print("The average grade for assignment \(assignmentNumber) is \(average)")
